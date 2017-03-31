@@ -49,7 +49,7 @@ namespace Juego
             Enemigo[] enemies = new Enemigo[5];
             for (int i = 0; i < enemies.Length; i ++)
             {
-                enemies[i] = new Enemigo(randspawnX, randspawnY, Convert.ToChar(i/*+48*/));
+                enemies[i] = new Enemigo(randspawnX, randspawnY, 'X');
                 randspawnY = rnd.Next(1, 23);
                 randspawnX = rnd.Next(1, 77);                
             }

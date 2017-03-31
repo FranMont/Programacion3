@@ -39,7 +39,6 @@ namespace Juego
             name = c;
             Console.SetCursorPosition(locationX, locationY);
             Console.Write(name);
-            //Console.Write(locationX.ToString(), locationY.ToString());
         }
     }
 }

@@ -8,8 +8,8 @@ namespace Juego
 {
     class Personaje
     {
-        public int limiteX = 77;
-        public int limiteY = 23;
+        static public int limiteX = 78;
+        static public int limiteY = 23;
         int oldPosX;
         int oldPosY;
         int locationX = 0;
@@ -84,6 +84,7 @@ namespace Juego
         }
         public Personaje()
         {
+            Console.CursorVisible = false;
             locationX = 15;
             locationY = 15;
             oldPosX = locationX;
