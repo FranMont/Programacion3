@@ -35,6 +35,13 @@ namespace Juego
                 Console.Write("║");
             }
         }
+        static void drawMenu()
+        {
+            Console.SetCursorPosition(20, 20);
+            Console.Write("Presione una tecla para comenzar.");
+            Console.SetCursorPosition(24, 21);
+            Console.Write("Presione Esc para salir.");
+        }
         static void Main(string[] args)
         {
             Random rnd = new Random();
@@ -44,23 +51,45 @@ namespace Juego
             bool playerDead = false;
             bool finishGame = false;
             bool gameOverShow = false;
+            bool inMenu = false;
+            bool showMenu = false;
             ConsoleKeyInfo userKey;
             Personaje player = new Personaje();
             Enemigo[] enemies = new Enemigo[5];
             Enemigo[] enemiesMove = new Enemigo[4];
-            for (int i = 0; i < enemies.Length; i ++)
+            Console.Clear();
+            while(inMenu == false)
+            {
+                if(showMenu == false)
+                {
+                    drawMenu();
+                    showMenu = true;
+                }
+                if (Console.KeyAvailable)
+                {
+                    userKey = Console.ReadKey();
+                    if (userKey.Key == ConsoleKey.Escape)
+                    {
+                        finishGame = true;
+                    }
+                    inMenu = true;
+                }
+            }
+            Console.Clear();
+            for (int i = 0; i < enemies.Length; i++)
             {
                 enemies[i] = new Obstaculo(randspawnX, randspawnY, 'X');
+                enemies[i].Draw();
                 randspawnY = rnd.Next(1, 23);
-                randspawnX = rnd.Next(1, 77);                
+                randspawnX = rnd.Next(1, 77);
             }
             for (int i = 0; i < enemiesMove.Length; i++)
             {
                 randspawnX = rnd.Next(2, 76);
-                enemiesMove[i] = new Enemlr(randspawnX, i+i*i+1, 'Y');
+                enemiesMove[i] = new Enemlr(randspawnX, i + i * i + 1, 'Y');
             }
             DrawMap();
-            player.Draw();            
+            player.Draw();
             while (finishGame == false)
             {
                 for (int i = 0; i < enemies.Length; i++)
