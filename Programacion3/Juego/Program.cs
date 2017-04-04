@@ -45,13 +45,19 @@ namespace Juego
             bool finishGame = false;
             bool gameOverShow = false;
             ConsoleKeyInfo userKey;
-            Personaje player = new Personaje();            
+            Personaje player = new Personaje();
             Enemigo[] enemies = new Enemigo[5];
+            Enemigo[] enemiesMove = new Enemigo[4];
             for (int i = 0; i < enemies.Length; i ++)
             {
-                enemies[i] = new Enemigo(randspawnX, randspawnY, 'X');
+                enemies[i] = new Obstaculo(randspawnX, randspawnY, 'X');
                 randspawnY = rnd.Next(1, 23);
                 randspawnX = rnd.Next(1, 77);                
+            }
+            for (int i = 0; i < enemiesMove.Length; i++)
+            {
+                randspawnX = rnd.Next(2, 76);
+                enemiesMove[i] = new Enemlr(randspawnX, i+i*i+1, 'Y');
             }
             DrawMap();
             player.Draw();            
@@ -64,6 +70,17 @@ namespace Juego
                         playerDead = true;
                     }
                 }
+                for (int i = 0; i < enemiesMove.Length; i++)
+                {
+                    if (playerDead == false)
+                    {
+                        enemiesMove[i].EnemiesMove();
+                    }
+                    if (enemiesMove[i].collision(player.posX(), player.posY()) == true)
+                    {
+                        playerDead = true;
+                    }
+                }
                 if (playerDead == true && gameOverShow == false)
                 {
                     gameOverShow = true;
@@ -71,8 +88,7 @@ namespace Juego
                 }
                 if (Console.KeyAvailable)
                 {
-                    userKey = Console.ReadKey(true);                 
-                    
+                    userKey = Console.ReadKey(true);                    
                     if (userKey.Key == ConsoleKey.X)
                     {
                         Console.Clear();
@@ -90,18 +106,19 @@ namespace Juego
                         player.MoveCharacter(userKey);
                         switch (userKey.Key)
                         {
-                            case ConsoleKey.NumPad1:
+                            /*case ConsoleKey.NumPad1:
                                 player.SetPos(79, 24);//Limits
                                 break;
                             case ConsoleKey.Spacebar:
                                 player.SetPos(0, 0);
-                                break;
+                                break;*/
                             case ConsoleKey.Escape:
                                 finishGame = true;
                                 break;
                         }
                     }
                 }
+                System.Threading.Thread.Sleep(50);
             }
         }
     }
