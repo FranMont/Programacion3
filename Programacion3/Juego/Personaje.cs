@@ -60,6 +60,7 @@ namespace Juego
                         if (locationX > 1)
                         {
                             locationX = locationX - 1;
+                            Juego.giveScoreToPlayer(1, 10);
                         }
                         break;
 
@@ -67,21 +68,23 @@ namespace Juego
                         if (locationX < 78)
                         {
                             locationX = locationX + 1;
+                            Juego.giveScoreToPlayer(1, 10);
                         }
                         break;
 
                     case ConsoleKey.UpArrow:
-                        if (locationY > 1)
+                        if (locationY > 2)
                         {
                             locationY = locationY - 1;
+                            Juego.giveScoreToPlayer(1, 10);
                         }
                         break;
 
                     case ConsoleKey.DownArrow:
                         if (locationY < 23)
                         {
-
                             locationY = locationY + 1;
+                            Juego.giveScoreToPlayer(1, 10);
                         }
                         break;
                 }
@@ -96,6 +99,7 @@ namespace Juego
                         if (locationX > 1)
                         {
                             locationX = locationX - 1;
+                            Juego.giveScoreToPlayer(2, 10);
                         }
                         break;
 
@@ -103,13 +107,15 @@ namespace Juego
                         if (locationX < 78)
                         {
                             locationX = locationX + 1;
+                            Juego.giveScoreToPlayer(2, 10);
                         }
                         break;
 
                     case ConsoleKey.W:
-                        if (locationY > 1)
+                        if (locationY > 2)
                         {
                             locationY = locationY - 1;
+                            Juego.giveScoreToPlayer(2, 10);
                         }
                         break;
 
@@ -118,6 +124,7 @@ namespace Juego
                         {
 
                             locationY = locationY + 1;
+                            Juego.giveScoreToPlayer(2, 10);
                         }
                         break;
                 }
