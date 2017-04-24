@@ -8,13 +8,23 @@ namespace Juego
 {
     class Personaje
     {
+        public const int MAX_VIDAS = 3;
         static public int limiteX = 78;
         static public int limiteY = 23;
+        static private int vidas;
         int oldPosX;
         int oldPosY;
         int locationX = 0;
         int locationY = 0;
         bool j2 = false;
+        static public int getVidas()
+        {
+            return vidas;
+        }
+        static public void setVidas(int _vidas)
+        {
+            vidas = _vidas;
+        }
         public int oldX()
         {
             return oldPosX;
@@ -36,6 +46,12 @@ namespace Juego
             locationX = x;
             locationY = y;
             Draw();
+        }
+
+        static public void UpdateVidas()
+        {
+            Console.SetCursorPosition(35, 1);
+            Console.Write("Vidas: " + getVidas());
         }
         public void Draw()
         {
@@ -73,7 +89,7 @@ namespace Juego
                         break;
 
                     case ConsoleKey.UpArrow:
-                        if (locationY > 2)
+                        if (locationY > 3)
                         {
                             locationY = locationY - 1;
                             Juego.giveScoreToPlayer(1, 10);
@@ -112,7 +128,7 @@ namespace Juego
                         break;
 
                     case ConsoleKey.W:
-                        if (locationY > 2)
+                        if (locationY > 3)
                         {
                             locationY = locationY - 1;
                             Juego.giveScoreToPlayer(2, 10);
@@ -154,13 +170,13 @@ namespace Juego
             locationY = 15;
             oldPosX = locationX;
             oldPosY = locationY;
+            setVidas(MAX_VIDAS);
         }
         public void P2(bool _j2)
         {
             locationX = 30;
             j2 = _j2;
             oldPosX = locationX;
-            
         }
     }
 }

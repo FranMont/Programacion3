@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Juego
 {
@@ -11,12 +9,31 @@ namespace Juego
         static private int scoreP1;
         static private int scoreP2;
         static private int highScore;
-        bool j2 = false;
+        private bool j2 = false;
+        FileStream fs;
+        BinaryWriter bw;
         public Juego()
-        {
+        {            
+            if (!File.Exists("HighScore.dat"))
+            {
+                fs = File.Create("HighScore.dat");
+                bw = new BinaryWriter(fs);
+                highScore = 0;
+                bw.Write(highScore);
+                bw.Close();
+                fs.Close();
+            }
+            else
+            {
+                BinaryReader br;
+                fs = File.OpenRead("HighScore.dat");
+                br = new BinaryReader(fs);
+                highScore = br.ReadInt32();
+                br.Close();
+                fs.Close();
+            }
             scoreP1 = -1;
             scoreP2 = -1;
-            highScore = 1;
         }
         static public void giveScoreToPlayer(int player, int score)
         {
@@ -41,6 +58,10 @@ namespace Juego
         {
             scoreP1 = 0;
             scoreP2 = 0;
+        }
+        static void UpdateVidas()
+        {
+            
         }
         static void UpdateScore()
         {
@@ -84,6 +105,9 @@ namespace Juego
         }
         static void drawMenu()
         {
+
+            Console.SetCursorPosition(28, 18);
+            Console.Write("Highscore: " + highScore);
             Console.SetCursorPosition(22, 20);
             Console.Write("Presione 1 para jugar solo");
             Console.SetCursorPosition(20, 21);
@@ -164,13 +188,33 @@ namespace Juego
             {
                 for (int i = 0; i < enemies.Length; i++)
                 {
-                    if (enemies[i].collision(player.posX(), player.posY()) == true)
+                    if (enemies[i].collision(player.posX(), player.posY()) == true && gameOverShow == false)
                     {
-                        playerDead = true;
+                        Personaje.setVidas(Personaje.getVidas() - 1);
+                        if (Personaje.getVidas() > 0)
+                        {
+                            player.ResetPersonaje();
+                        }
+                        else
+                        {
+                            playerDead = true;
+                        }
                     }
-                    if (enemies[i].collision(player2.posX(), player2.posY()) == true && j2 == true)
+                    if (enemies[i].collision(player2.posX(), player2.posY()) == true && j2 == true && gameOverShow == false)
                     {
-                        playerDead = true;
+                        Personaje.setVidas(Personaje.getVidas() - 1);
+                        if (Personaje.getVidas() > 0)
+                        {                            
+                            player2.ResetPersonaje();
+                        }
+                        else
+                        {
+                            playerDead = true;
+                        }
+                    }
+                    if (gameOverShow == false)
+                    {
+                        enemies[i].Draw();
                     }
                 }
                 for (int i = 0; i < enemiesMove.Length; i++)
@@ -179,13 +223,29 @@ namespace Juego
                     {
                         enemiesMove[i].EnemiesMove();
                     }
-                    if (enemiesMove[i].collision(player2.posX(), player2.posY()) == true && j2 == true)
+                    if (enemiesMove[i].collision(player2.posX(), player2.posY()) == true && j2 == true && gameOverShow == false)
                     {
-                        playerDead = true;
+                        Personaje.setVidas(Personaje.getVidas() - 1);
+                        if (Personaje.getVidas() > 0)
+                        {
+                            player2.ResetPersonaje();
+                        }
+                        else
+                        {
+                            playerDead = true;
+                        }
                     }
-                    if (enemiesMove[i].collision(player.posX(), player.posY()) == true)
+                    if (enemiesMove[i].collision(player.posX(), player.posY()) == true && gameOverShow == false)
                     {
-                        playerDead = true;
+                        Personaje.setVidas(Personaje.getVidas() - 1);
+                        if (Personaje.getVidas() > 0)
+                        {
+                            player.ResetPersonaje();
+                        }
+                        else
+                        {
+                            playerDead = true;
+                        }
                     }
                 }
                 if (playerDead == true && gameOverShow == false)
@@ -205,6 +265,7 @@ namespace Juego
                         }
                         playerDead = false;
                         DrawMap();
+                        Personaje.setVidas(Personaje.MAX_VIDAS);
                         player.ResetPersonaje();
                         if (j2 == true)
                             player2.ResetPersonaje();
@@ -236,9 +297,15 @@ namespace Juego
                         }
                     }
                 }
+                Personaje.UpdateVidas();
                 UpdateScore();
                 System.Threading.Thread.Sleep(50);
             }
+            fs = File.OpenWrite("HighScore.dat");
+            bw = new BinaryWriter(fs);
+            bw.Write(highScore);
+            bw.Close();
+            fs.Close();
         }
     }
 }
