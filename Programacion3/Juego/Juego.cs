@@ -1,17 +1,66 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Net;
+using Newtonsoft.Json.Linq;
 
 namespace Juego
 {
     class Juego
     {
+        static private string ciudad;
+        static private string clima;
         static private int scoreP1;
         static private int scoreP2;
         static private int highScore;
         private bool j2 = false;
         FileStream fs;
         BinaryWriter bw;
+        public static void SetConsoleClima()
+        {
+            if (clima == "Cloudy" || clima == "Breezy")
+            {
+                Console.BackgroundColor = ConsoleColor.Gray;
+                Console.ForegroundColor = ConsoleColor.Black;
+            }
+            else if (clima == "Sunny")
+            {
+                Console.BackgroundColor = ConsoleColor.Yellow;
+                Console.ForegroundColor = ConsoleColor.Black;
+            }
+            else if (clima == "Thunderstorms")
+            {
+                Console.BackgroundColor = ConsoleColor.Blue;
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+            else
+            {
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+        }
+        public static bool CheckClima()
+        {
+            Console.Clear();
+            Console.Write("Escriba una Ciudad: ");
+            ciudad = Console.ReadLine();
+            WebRequest req = WebRequest.Create("https://query.yahooapis.com/v1/public/yql?q=select%20item.condition.text%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22" + ciudad + "%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys");
+            WebResponse respuesta = req.GetResponse();
+            Stream stream = respuesta.GetResponseStream();
+            StreamReader sr = new StreamReader(stream);
+            JObject data = JObject.Parse(sr.ReadToEnd());
+            int errorfound = (int)data["query"]["count"];
+            if (errorfound == 0)
+            {
+                Console.WriteLine("Esa ciudad no existe");
+                return false;
+            }
+            else
+            {
+                clima = (string)data["query"]["results"]["channel"]["item"]["condition"]["text"];
+                Console.WriteLine("Tiempo: " + clima);
+                return true;
+            }
+        }
         public Juego()
         {            
             if (!File.Exists("HighScore.dat"))
@@ -34,6 +83,35 @@ namespace Juego
             }
             scoreP1 = -1;
             scoreP2 = -1;
+            if (CheckForInternetConnection() == true)
+            {
+                bool cityExist = false;
+                while(cityExist == false)
+                {
+                    cityExist = CheckClima();
+                }
+                if (cityExist == true)
+                {
+                    SetConsoleClima();
+                }
+            }
+        }
+        public static bool CheckForInternetConnection()
+        {
+            try
+            {
+                using (var client = new WebClient())
+                {
+                    using (var stream = client.OpenRead("http://www.google.com"))
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
         static public void giveScoreToPlayer(int player, int score)
         {
@@ -58,10 +136,6 @@ namespace Juego
         {
             scoreP1 = 0;
             scoreP2 = 0;
-        }
-        static void UpdateVidas()
-        {
-            
         }
         static void UpdateScore()
         {
@@ -256,7 +330,7 @@ namespace Juego
                 if (Console.KeyAvailable)
                 {
                     userKey = Console.ReadKey(true);
-                    if (userKey.Key == ConsoleKey.X)
+                    if (userKey.Key == ConsoleKey.X && gameOverShow == true)
                     {
                         Console.Clear();
                         for (int i = 0; i < enemies.Length; i++)
@@ -285,12 +359,6 @@ namespace Juego
                         }
                         switch (userKey.Key)
                         {
-                            /*case ConsoleKey.NumPad1:
-                                player.SetPos(79, 24);//Limits
-                                break;
-                            case ConsoleKey.Spacebar:
-                                player.SetPos(0, 0);
-                                break;*/
                             case ConsoleKey.Escape:
                                 finishGame = true;
                                 break;
